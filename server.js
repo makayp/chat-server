@@ -71,7 +71,7 @@ io.on('connection', (socket) => {
   socket.emit('messages', messages);
 
   setInterval(() => {
-    io.emit('messages', messages);
+    socket.emit('messages', messages);
   }, 60000);
 
   socket.on('message', (data) => {
