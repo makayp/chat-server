@@ -5,7 +5,7 @@ const app = express();
 const messages = [
   {
     id: 1,
-    sender: 'Em',
+    sender: 'Emmanuel',
     message: 'Hello',
     time: '2024-06-14T14:53:10.665Z',
   },
@@ -60,9 +60,9 @@ const expressServer = app.listen(PORT, () => {
 });
 
 const io = new Server(expressServer, {
-  // cors: {
-  //   origin: '*',
-  // },
+  cors: {
+    origin: 'https://chat-app-mkp.netlify.app/',
+  },
 });
 
 io.on('connection', (socket) => {
