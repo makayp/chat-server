@@ -60,9 +60,9 @@ const expressServer = app.listen(PORT, () => {
 });
 
 const io = new Server(expressServer, {
-  cors: {
-    origin: '*',
-  },
+  // cors: {
+  //   origin: '*',
+  // },
 });
 
 io.on('connection', (socket) => {
