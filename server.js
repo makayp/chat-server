@@ -51,6 +51,14 @@ const messages = [
 
 const PORT = process.env.PORT || 3000;
 
+app.get('/', (req, res) => {
+  res.send('Server is live!');
+});
+
+app.get('/messages', (req, res) => {
+  res.send(messages);
+});
+
 const expressServer = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
