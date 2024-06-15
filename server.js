@@ -55,10 +55,6 @@ app.get('/', (req, res) => {
   res.send('Server is live!');
 });
 
-app.get('/messages', (req, res) => {
-  res.send(messages);
-});
-
 const expressServer = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
