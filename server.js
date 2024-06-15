@@ -49,7 +49,7 @@ const messages = [
   },
 ];
 
-const PORT = 1111;
+const PORT = process.env.PORT || 3000;
 
 const expressServer = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
