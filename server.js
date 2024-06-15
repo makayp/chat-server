@@ -61,7 +61,7 @@ const expressServer = app.listen(PORT, () => {
 
 const io = new Server(expressServer, {
   cors: {
-    origin: 'https://chat-app-mkp.netlify.app/',
+    origin: ['https://chat-app-mkp.netlify.app', 'chat-app-mkp.netlify.app'],
   },
 });
 
