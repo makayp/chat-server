@@ -1,8 +1,10 @@
 import express from 'express';
 import { Server } from 'socket.io';
+import { configDotenv } from 'dotenv';
 
+configDotenv();
 const app = express();
-const messages = [
+let messages = [
   {
     id: 1,
     sender: 'Emmanuel',
@@ -49,7 +51,7 @@ const messages = [
   },
 ];
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 app.get('/', (req, res) => {
   res.send('Server is live!');
@@ -61,26 +63,51 @@ const expressServer = app.listen(PORT, () => {
 
 const io = new Server(expressServer, {
   cors: {
-    origin: ['https://chat-app-mkp.netlify.app', 'https://demochat.emmanuelp.dev'],
+    origin: [
+      'https://chat-app-mkp.netlify.app',
+      'https://demochat.emmanuelp.dev',
+      'http://localhost:5173',
+    ],
   },
 });
 
 io.on('connection', (socket) => {
-  console.log('Socket connected');
-  io.emit('welcome', socket.handshake.auth.user);
-  socket.emit('messages', messages);
+  console.log(`${socket.handshake.auth.currentUser} connected`);
+  socket.join('public chat');
 
-  setInterval(() => {
-    socket.emit('messages', messages);
-  }, 60000);
+  socket.broadcast
+    .to('public chat')
+    .emit('join', socket.handshake.auth.currentUser);
+  socket.emit('welcome', messages);
 
-  socket.on('message', (data) => {
-    messages.push(data);
-    io.emit('messages', messages);
+  socket.on('typing', (user) => {
+    socket.broadcast.to('public chat').emit('typing', user);
+  });
+
+  socket.on('message', (message) => {
+    messages.push(message);
+    socket.broadcast.to('public chat').emit('message', message);
   });
 
   socket.on('disconnect', () => {
-    console.log(socket.handshake.auth.user);
-    io.emit('leave-chat', socket.handshake.auth.user);
+    console.log(socket.handshake.auth.currentUser);
+    socket.broadcast.emit('leave-chat', socket.handshake.auth.currentUser);
   });
 });
+
+// Function to delete messages older than 1 hour
+function clearOldMessages() {
+  const ONE_HOUR = 60 * 60 * 1000;
+  const currentTime = new Date().getTime();
+
+  messages = messages.filter((message) => {
+    const messageTime = new Date(message.time).getTime();
+    return currentTime - messageTime < ONE_HOUR;
+  });
+
+  io.emit('welcome', messages);
+}
+
+setInterval(() => {
+  clearOldMessages();
+}, 60 * 60 * 1000);
