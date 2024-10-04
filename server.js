@@ -51,7 +51,7 @@ let messages = [
   },
 ];
 
-const PORT = process.env.PORT || 4000;
+const PORT = 3000;
 
 app.get('/', (req, res) => {
   res.send('Server is live!');
